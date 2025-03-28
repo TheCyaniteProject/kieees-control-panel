@@ -1,0 +1,314 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>Kieee's Control Panel</title>
+    <style>
+        /* Remove default margin and padding */
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            color: white;
+            font-family: "Roboto", sans-serif;
+            text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+        }
+
+        .font-variation-settings {
+            color: white;
+        }
+
+        .container {
+            background-color: rgba(0, 191, 255, 0.3);
+            overflow:hidden;
+            display: grid;
+            grid-template-rows: 30px auto;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .title-bar {
+            font-family: "Roboto", sans-serif;
+            -webkit-app-region: drag;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            line-height: 30px;
+            padding: 0 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .window-button {
+            font-family: "Roboto", sans-serif;
+            -webkit-app-region: no-drag;
+            cursor: pointer;
+            padding: 5px;
+            color: white;
+        }
+
+        .top-panel {
+        }
+
+        .bottom-panel {
+            display: grid;
+            grid-template-rows: 100px, 100px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 1px solid black;
+        }
+
+        .logs {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .entry {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: left;
+            border: 1px solid black;
+        }
+
+        .console-toggle {
+            height: 100%;
+            width: 12%;
+            border: 1px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+            .console-toggle > span, .console-toggle > input {
+                width: 100%;
+                text-align: center;
+            }
+
+        .toggle-input {
+            background-color: transparent;
+            height: 80%;
+            display: none;
+            box-sizing: border-box;
+            color: white;
+            outline: 1px solid white;
+            margin: 3px 3px;
+        }
+
+        .console-output {
+            width: 100%;
+            padding: 5px;
+            overflow-y: scroll;
+            scroll-behavior: auto;
+        }
+
+        .output {
+            text-align: left;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            font-family: "Roboto", sans-serif;
+            font-size: 12px;
+        }
+
+        .parent {
+            height: 100%;
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-bar">
+            <div class="title">
+                <span style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20; font-size: 20px;" class="material-symbols-outlined">shield_person</span>
+                <span>Kieee's Control Panel</span>
+            </div>
+            <div class="controls">
+                <span style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20; font-size: 20px; cursor: pointer; padding: 2px;" class="material-symbols-outlined" id="debug">code</span>
+                <span style="font-variation-settings: 'FILL' 0, 'wght' 330, 'GRAD' 0, 'opsz' 20; font-size: 20px; cursor: pointer; position: relative; bottom: 7px;" class="material-symbols-outlined" id="minimize">minimize</span>
+                <span style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20; font-size: 20px; cursor: pointer;" class="material-symbols-outlined" id="close">close</span>
+            </div>
+            <style>
+                .title {
+                    display: flex;
+                    align-items: center;
+                }
+
+                .controls {
+                    -webkit-app-region: no-drag;
+                    display: flex;
+                    align-items: center;
+                }
+            </style>
+            <script>
+                document.getElementById("debug").addEventListener("click", () => {
+                    window.api.openDevTools();
+                });
+                document.getElementById("minimize").addEventListener("click", () => {
+                    window.api.minimize();
+                });
+                document.getElementById("close").addEventListener("click", () => {
+                    window.api.close();
+                });
+            </script>
+        </div>
+        <div class="parent">
+            <div class="top-panel">Top Panel</div>
+            <div class="bottom-panel">
+                <div class="logs">
+                    <!-- Three console-output areas. Only one is active at a time -->
+                    <div class="console-output" id="output1" style="display: block;">
+                    </div>
+                    <div class="console-output" id="output2" style="display: none;">
+                    </div>
+                    <div class="console-output" id="output3" style="display: none;">
+                    </div>
+                </div>
+                <div class="entry">
+                    <!-- Three console-toggle panels -->
+                    <div class="console-toggle">
+                        <span style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20; font-size: 25px;" class="material-symbols-outlined" id="label">bug_report</span>
+                        <input class="toggle-input" type="text" placeholder="Type here..." />
+                    </div>
+                    <div class="console-toggle">
+                        <span style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20; font-size: 25px;" class="material-symbols-outlined" id="label">terminal</span>
+                        <input class="toggle-input" type="text" placeholder="Type here..." />
+                    </div>
+                    <div class="console-toggle">
+                        <span style="font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20; font-size: 25px;" class="material-symbols-outlined" id="label">memory</span>
+                        <input class="toggle-input" type="text" placeholder="Type here..." />
+                    </div>
+                    <style>
+                        #label {
+                            text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+                        }
+                    </style>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+
+        // Global variable holding the active output div. Start with output1.
+        let activeOutput = document.getElementById("output1");
+
+        // Function to add a new line to the active output area.
+        function sendMessageToConsole(consoleName, code) {
+            const con = document.getElementById(consoleName);
+            const div = document.createElement("div");
+            div.style.display = "flex";
+            div.innerHTML = code;
+            con.appendChild(div);
+        }
+
+        // Function to set the active output area based on its ID.
+        function setActiveOutput(outputId) {
+            const outputs = document.querySelectorAll(".console-output");
+            outputs.forEach((output) => {
+                if (output.id === outputId) {
+                    output.style.display = "block";
+                    activeOutput = output;
+                } else {
+                    output.style.display = "none";
+                }
+            });
+        }
+
+        // DOMContentLoaded event: Set up the console-toggle functionality
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggles = document.querySelectorAll(".console-toggle");
+            // Variable to track the currently active toggle (for input field display)
+            let activeToggle = null;
+
+            toggles.forEach((toggle, index) => {
+                // Click listener on the toggle to show its input field and switch output areas.
+                toggle.addEventListener("click", function (e) {
+                    // If a different toggle is already active, revert it.
+                    if (activeToggle && activeToggle !== toggle) {
+                        const activeInput = activeToggle.querySelector(".toggle-input");
+                        const activeText = activeToggle.querySelector("#label");
+                        activeInput.style.display = "none";
+                        activeText.style.display = "block";
+                        activeToggle.style.width = "12%";
+                    }
+
+                    const input = toggle.querySelector(".toggle-input");
+                    const text = toggle.querySelector("#label");
+
+                    // Show the input field if not already visible.
+                    if (input.style.display === "none" || input.style.display === "") {
+                        input.style.display = "block";
+                        input.style.textAlign = "left";
+                        text.style.display = "none";
+                        toggle.style.width = "76%";
+                        input.focus();
+                        activeToggle = toggle;
+                    }
+
+                    setActiveOutput("output" + (index + 1));
+                });
+
+                // Listen for the Enter key on the input field.
+                const inputField = toggle.querySelector(".toggle-input");
+                inputField.addEventListener("keydown", function (e) {
+                    if (e.key === "Enter") {
+                        // Call addOutputLine with the input value.
+                        if (inputField.value.trim() !== "") {
+                            parseCommand("output" + (index + 1), inputField.value);
+                            inputField.value = ""; // Clear input afterward.
+                        }
+                    }
+                });
+            });
+        });
+
+        function parseCommand(consoleId, text) {
+            // TODO
+            if (consoleId === "output3") {
+                sendMessageToConsole(consoleId, `<pre class="output" style="color:red;">Admin: </pre><pre class="output">${text}</pre>`);
+                // run `text` through an ai
+            }
+            else if (consoleId === "output2") {
+                window.api.sendCommand(text);
+                sendMessageToConsole(consoleId, `<pre class="output">/> ${text}</pre>`);
+            }
+            else {
+                sendMessageToConsole(consoleId, `<pre class="output">${text}</pre>`);
+            }
+            
+        }
+
+        window.addEventListener('command-response', (event) => {
+            const response = event.detail; // The response from main process.
+            sendMessageToConsole("output2", `<pre class="output">${response}</pre>`);
+        });
+
+
+        async function ConsoleStartup() {
+            sendMessageToConsole("output1", "Hello, world!");
+
+            window.api.sendCommand("ver");
+
+            sendMessageToConsole("output3", `<pre class="output" style="color:blue;">Assistant: </pre><pre class="output">Hello there! How can I assist you today?</pre>`);
+        }
+
+        ConsoleStartup();
+    </script>
+</body>
+</html>
