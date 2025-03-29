@@ -23,8 +23,8 @@
         }
 
         .container {
-            background-color: rgba(0, 191, 255, 0.3);
-            overflow:hidden;
+            background-color: rgba(0, 191, 255, 0.4);
+            overflow: hidden;
             display: grid;
             grid-template-rows: 30px auto;
             flex-direction: column;
@@ -58,15 +58,15 @@
 
         .bottom-panel {
             display: grid;
-            grid-template-rows: 100px, 100px;
+            grid-template-rows: auto 50px;
             align-items: center;
-            justify-content: center;
             flex-direction: column;
             border: 1px solid black;
         }
 
         .logs {
             width: 100%;
+            height: 321px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -74,6 +74,7 @@
 
         .entry {
             width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: left;
@@ -108,9 +109,12 @@
 
         .console-output {
             width: 100%;
+            height: 100%;
             padding: 5px;
             overflow-y: scroll;
             scroll-behavior: auto;
+            font-family: "Roboto", sans-serif;
+            font-size: 12px;
         }
 
         .output {
@@ -200,7 +204,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
 
     <script>
@@ -285,27 +289,69 @@
                 // run `text` through an ai
             }
             else if (consoleId === "output2") {
-                window.api.sendCommand(text);
-                sendMessageToConsole(consoleId, `<pre class="output">/> ${text}</pre>`);
+                debugLog("Ran Terminal Command: " + text);
+
+                if (['cls', 'clear'].includes(text.trim().toLowerCase())) {
+                    const element = document.getElementById("output2");
+                    while (element.firstChild) {
+                        element.removeChild(element.firstChild);
+                    }
+                    if (lastLine.includes("\n")) {
+                        sendMessageToConsole("output2", `<pre class="output">${lastLine.split("\n")[lastLine.split("\n").length - 1].trim()}</pre>`);
+                    }
+                    else {
+                        sendMessageToConsole("output2", `<pre class="output">${lastLine.trim()}</pre>`);
+                    }
+                }
+                else {
+                    window.api.sendCommand(text);
+                }
             }
             else {
                 sendMessageToConsole(consoleId, `<pre class="output">${text}</pre>`);
             }
-            
+
         }
 
+        let lastLine = "";
+
         window.addEventListener('command-response', (event) => {
-            const response = event.detail; // The response from main process.
-            sendMessageToConsole("output2", `<pre class="output">${response}</pre>`);
+            const response = event.detail;
+
+            lastLine = response;
+
+            const element = document.getElementById("output2");
+
+            // Check if the element has at least one child element
+            let child = element.lastElementChild;
+            if (child) {
+                child = child.lastElementChild
+                // Get the text content and trim any potential whitespace from both ends
+                const text = child.textContent.trim();
+
+                // Check if the last character of the text is ">"
+                if (text.slice(-1) === ">") {
+                    // Append the additional string to the existing textContent
+                    child.textContent += response;
+                }
+                else {
+                    sendMessageToConsole("output2", `<pre class="output">${response}</pre>`);
+                }
+            }
+            else {
+                sendMessageToConsole("output2", `<pre class="output">${response}</pre>`);
+            }
         });
 
 
         async function ConsoleStartup() {
             sendMessageToConsole("output1", "Hello, world!");
 
-            window.api.sendCommand("ver");
-
             sendMessageToConsole("output3", `<pre class="output" style="color:blue;">Assistant: </pre><pre class="output">Hello there! How can I assist you today?</pre>`);
+        }
+
+        function debugLog(text) {
+            sendMessageToConsole("output1", `<pre class="output">${text}</pre>`);
         }
 
         ConsoleStartup();
